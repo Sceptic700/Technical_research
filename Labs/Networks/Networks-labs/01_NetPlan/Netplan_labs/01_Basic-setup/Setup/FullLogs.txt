@@ -1,0 +1,33 @@
+*** Netplan_setup - Full_logs ***
+
+Preparation:
+Using: Oracle VirtualBox
+1) Virtual Machine 1(SERVER): ubuntu-24.04.1-desktop-amd64
+2) Virtual Machine 2(CLIENT): ubuntu-24.04.1-desktop-amd64
+Setup:
+
+1) Virtual machine 1;2: assigned second network adapter via Oracle VirtualBox to 'Bridge adapter'
+2) Virtual machine 1;2: tried do 'ip a' enp0s8 shows already signed IP's addresses to each machine - that's not what I
+was expecting because I wanted to assign ip's manually with netplan
+3) Virtual machine 1;2: changed second network adapter via Oracle VirtualBox to 'Internal network'
+4) Virtual machine 1;2: 'ip a' - now I don't get auto assigned on enp0s8 , as expected
+5) Virtual machine 1;2: 'cd /etc/netplan' 'cp 50-cloud-init.yaml 50-cloud-init-copy.yaml' -
+made copy of existing config to keep stable version in case if i break main one.
+6) Virtual machine 1;2: 'nano 50-cloud-init.yaml':
+network:
+    ethernets:
+        enp0s3:
+            dhcp4: true
+        enp0s8:
+            dhcp4: false
+            addresses:
+                - 192.168.0.1/24
+    version: 2
+added config for enp0s8 , turned off dhcp to not apply for ip assigning and wrote manually static ip with mask /24. Assigned another ip '192.168.0.2/24'
+for 'Virtual machine 2'
+7) Virtual machine 1;2: sudo netplan try --- trying changes
+8) Virtual machine 1;2: sudo netplan apply --- applying changes
+9) Virtual machine 2: ping 192.168.0.1 --- successfully pinging second machine
+10) To make sure Virtual machine is not pinging some random computer I changed ip on Virtual machine 1 to 192.168.0.5/24 in netplan and did
+' ping 192.168.0.1 ' again using Virtual machine 2 - now I got 'Host is unreachable' that proves that everything indeed works correctly
+11) Virtual machine 1: ping 192.168.0.2 --- and also works fine in opposite way

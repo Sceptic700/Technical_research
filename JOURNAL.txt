@@ -1,0 +1,9 @@
+This document provides an overall list of labs, projects, and tools, organized
+chronologically from the first completed project to the most recent.
+
+1) 01_NetPlan - 01_Basic-setup
+2) 02_ISC_DHCP_SERVER - 01_Basic-setup
+3) 01_SSH - 01_Basic-setup
+4) 01_DOCKER - 01_Basic-setup
+5) 02_Ansible - 01_Automated_setup(Playbooks_DHCP)
+6) 02_SSH

@@ -1,0 +1,24 @@
+*** SSH_setup - Full_logs ***
+
+Preparation:
+Using: Oracle VirtualBox
+1) Virtual Machine 1(SERVER): ubuntu-24.04.1-desktop-amd64 ip: 192.168.0.1/24
+2) Virtual Machine 2(CLIENT): ubuntu-24.04.1-desktop-amd64 ip: 192.168.0.2/24
+Setup:
+
+1) Virtual machine 1;2: set up static IP's with netplan and "Internal Network" network
+cards
+Server: 192.168.0.1/24
+Client: 192.168.0.2/24
+2) Virtual machine 1: "sudo systemctl status ssh" - checked if ssh is already active.
+It's not currently active , as expected to be.
+3) Virtual machine 1: "sudo systemctl start ssh" - tried to start ssh.
+4) Virtual machine 1: "sudo systemctl status ssh" - now ssh is active
+5) Virtual machine 2: "ssh 192.168.0.1" - trying to connect to the server, connection
+happens.
+6) Virtual machine 2: "touch test.txt" - creating test file to see if connection works
+fine. On virtual machine 1 test.txt has appeared , proving that connection works.
+7) Virtual machine 1: sudo reboot now - rebooting to check if ssh starts on boot by
+itself.
+8) Virtual machine 2: "ssh 192.168.0.1" - ssh starts on boot as wanted and we can
+connect again

@@ -1,0 +1,82 @@
+*** ISC-setup - Full_logs ***
+
+Preparation:
+Using: Oracle VirtualBox
+1) Virtual Machine 1(SERVER): ubuntu-24.04.1-desktop-amd64 
+2) Virtual Machine 2(CLIENT): ubuntu-24.04.1-desktop-amd64 
+Setup:
+
+1) Virtual machine 1: set up static IP with netplan and "Internal Network" network
+cards
+Server: 192.168.0.1/24
+2) Virtual machine 2: configure netplan for enp0s8(Internal network card) and setup
+dhcp4 to true (by default not configured)
+
+/etc/netplan/50-cloud-init.yaml:
+network:
+    ethernets:
+        enp0s3:
+            dhcp4: true
+        enp0s8:
+            dhcp4:true
+after that: 
+"sudo netplan try"
+"sudo netplan apply"
+
+
+3) Virtual machine 1: "sudo apt install isc-dhcp-server" - installing isc-dhcp-server
+4) Virtual machine 1: "sudo cp /etc/dhcp/dhcpd.conf /etc/dhcp/copy-dhcpd.conf" - making
+copy of existing configuration file in case I break something
+5) Virtual machine 1: "sudo nano /etc/dhcp/dhcpd.conf" - adding lines ,
+configuring dhcp that way:
+
+subnet 192.168.0.0 netmask 255.255.255.0{
+  range 192.168.0.0 192.168.0.254
+  option routers 192.168.0.1
+}
+
+6) Virtual machine 1: "sudo nano /etc/default/isc-dhcp-server" telling
+isc-dhcp-server what interface(network card) to use,in our case enp0s8:
+
+INTERFACESv4="enp0s8"
+
+7) Virtual machine 1: "sudo systemctl restart isc-dhcp-server" - restarting service
+8) Virtual machine 1: "sudo systemctl status isc-dhcp-server" - checking status,
+seems fine and running as expected
+9) Virtual machine 2: "ip a" - Virtual machine 2 somehow got 192.168.0.0 ,
+which is not expected because it's network identifier and not a valid host address,
+never knew it was possible. Tried to ping gateway (192.168.0.1) "ping 192.168.0.1"
+and it pings gateway perfectly fine. But to avoid unexpected network work and bugs
+going to change DHCP settings 
+10)Virtual machine 1: "sudo nano /etc/dhcp/dhcpd.conf":
+
+subnet 192.168.0.0 netmask 255.255.255.0{
+  range 192.168.0.1 192.168.0.254
+  option routers 192.168.0.1
+} 
+
+11) Virtual machine 1: "sudo systemctl restart isc-dhcp-server"
+12) Virtual machine 2: "ip a" - now ip is 192.168.0.2 as expected to work
+12) Virtual machine 2: "ping 192.168.0.1" - to check if everything in order,
+pinging gateway(Virtual Machine 1) successfully
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
